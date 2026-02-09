@@ -6,8 +6,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Anime {
+public class 日本动画片 {
     private Long id;
+//    @JsonProperty('name')
     private String name;
 
 

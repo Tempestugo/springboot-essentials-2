@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 //@ComponentScan(basePackages = "academy.devodojo.springboot2")
 //@Configuration
 
-@SpringBootApplication
+// @SpringBootApplication
 //Tem tudo que tem acima e mais
 // Ou arrastar para a raíz da pasta que ai não precisa especificar o pacote
 public class ApplicationStart {
-    public static void main(String[] args) {
-        SpringApplication.run(ApplicationStart.class, args);
-
-    }
+//    public static void main(String[] args) {
+//        SpringApplication.run(ApplicationStart.class, args);
+//
+//    }
 }

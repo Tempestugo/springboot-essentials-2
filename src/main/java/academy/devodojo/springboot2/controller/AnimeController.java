@@ -7,9 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +32,11 @@ public class AnimeController {
     public List<Anime> list() {
         log.info(dataUtil.formatLocalDateTImeToDatabaseStyle(LocalDateTime.now()));
         return List.of(new Anime("DBZ"), new Anime("Berserk"));
+    }
+    @PostMapping
+    public ResponseEntity<Anime> save(@RequestBody Anime anime){
+
+        return ResponseEntity.ok(anime);
     }
 
 }
