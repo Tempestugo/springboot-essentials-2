@@ -8,6 +8,7 @@ import org.example.springboot_2.requests.AnimePostRequestBody;
 import org.example.springboot_2.requests.AnimePutRequestBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -23,11 +24,18 @@ public class 动漫服务 {
         return animeRepository.findAll();
     }
 
+    public List<日本动画片> findByName(String name) {
+        return animeRepository.findByName(name);
+    }
+
     public 日本动画片 findByIdOrThrowBadRequestException(long id) {
         return animeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Anime not Found"));
     }
 
+
+//    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public 日本动画片 save(AnimePostRequestBody animePostRequestBody) {
         return animeRepository.save(animeMapper.toAnime(animePostRequestBody));
     }
@@ -37,15 +45,9 @@ public class 动漫服务 {
     }
 
     public void replace(AnimePutRequestBody animePutRequestBody) {
-        // Verifica se existe antes de tentar atualizar
         日本动画片 savedAnime = findByIdOrThrowBadRequestException(animePutRequestBody.getId());
-        
-        // Usa o mapper para converter o DTO para a Entidade
         日本动画片 anime = animeMapper.toAnime(animePutRequestBody);
-        
-        // Garante que o ID está correto (embora o mapper já deva ter feito isso se o nome for igual)
         anime.setId(savedAnime.getId());
-
         animeRepository.save(anime);
     }
 }

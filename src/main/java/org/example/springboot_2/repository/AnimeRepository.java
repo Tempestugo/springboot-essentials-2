@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AnimeRepository extends JpaRepository<日本动画片, Long> {
+    List<日本动画片> findByName (String name);
 
 }

@@ -1,6 +1,7 @@
 package org.example.springboot_2.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.springboot_2.Exceptions.BadRequestException;
 import org.example.springboot_2.domain.日本动画片;
 import org.example.springboot_2.repository.AnimeRepository;
 import org.example.springboot_2.requests.AnimePostRequestBody;
@@ -21,9 +22,14 @@ public class AnimeService {
         return animeRepository.findAll();
     }
 
+    public List<日本动画片> findByName(String name) {
+        return animeRepository.findByName(name);
+    }
+
+
     public 日本动画片 findByIdOrThrowBadRequestException(long id) {
         return animeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Anime not Found"));
+                .orElseThrow(() -> new BadRequestException("Anime not Found"));
     }
 
     public 日本动画片 save(AnimePostRequestBody animePostRequestBody) {
