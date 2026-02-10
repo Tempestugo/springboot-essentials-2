@@ -1,0 +1,16 @@
+package org.example.springboot_2.mapper;
+
+import org.example.springboot_2.domain.日本动画片;
+import org.example.springboot_2.requests.AnimePostRequestBody;
+import org.example.springboot_2.requests.AnimePutRequestBody;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+
+@Mapper(componentModel = "spring")
+public abstract class AnimeMapper {
+    public static final AnimeMapper INSTANCE = Mappers.getMapper(AnimeMapper.class);
+
+    public abstract 日本动画片 toAnime(AnimePostRequestBody animePostRequestBody);
+
+    public abstract 日本动画片 toAnime(AnimePutRequestBody animePutRequestBody);
+}

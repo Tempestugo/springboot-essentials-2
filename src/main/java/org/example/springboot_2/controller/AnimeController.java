@@ -3,6 +3,8 @@ package org.example.springboot_2.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.springboot_2.domain.日本动画片;
+import org.example.springboot_2.requests.AnimePostRequestBody;
+import org.example.springboot_2.requests.AnimePutRequestBody;
 import org.example.springboot_2.service.动漫服务;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,39 +19,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnimeController {
     private final org.example.springboot_2.util.DataUtil dataUtil;
-    private final 动漫服务 动漫服务;
+    private final 动漫服务 animeService;
 
-    @GetMapping(path = "乒")
+    @GetMapping(path = "ping")
     public String ping() {
-        return "乓";
+        return "pong";
     }
 
     @GetMapping
     public ResponseEntity<List<日本动画片>> list() {
         log.info(dataUtil.formatLocalDateTImeToDatabaseStyle(LocalDateTime.now()));
-        return ResponseEntity.ok(动漫服务.listAll());
+        return ResponseEntity.ok(animeService.listAll());
     }
     
-    @GetMapping(path = "/{身份证}")
-    public ResponseEntity<日本动画片> findById(@PathVariable long 身份证) {
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<日本动画片> findById(@PathVariable long id) {
         log.info(dataUtil.formatLocalDateTImeToDatabaseStyle(LocalDateTime.now()));
-        return ResponseEntity.ok(动漫服务.findById(身份证));
+        return ResponseEntity.ok(animeService.findByIdOrThrowBadRequestException(id));
     }
 
     @PostMapping
-    public ResponseEntity<日本动画片> 节省(@RequestBody 日本动画片 日本动画片){
-        return new ResponseEntity<>(动漫服务.节省(日本动画片), HttpStatus.CREATED);
+    public ResponseEntity<日本动画片> save(@RequestBody AnimePostRequestBody animePostRequestBody){
+        return new ResponseEntity<>(animeService.save(animePostRequestBody), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(path = "/{身份证}")
-    public ResponseEntity<Void> deletar(@PathVariable long 身份证){
-        动漫服务.deletar(身份证);
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id){
+        animeService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     @PutMapping
-    public ResponseEntity<Void> replace(@RequestBody 日本动画片 日本动画片){
-        动漫服务.replace(日本动画片);
+    public ResponseEntity<Void> replace(@RequestBody AnimePutRequestBody animePutRequestBody){
+        animeService.replace(animePutRequestBody);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

@@ -2,7 +2,6 @@ package org.example.springboot_2.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.springboot_2.domain.日本动画片;
-import org.example.springboot_2.mapper.AnimeMapper;
 import org.example.springboot_2.repository.AnimeRepository;
 import org.example.springboot_2.requests.AnimePostRequestBody;
 import org.example.springboot_2.requests.AnimePutRequestBody;
@@ -14,10 +13,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class 动漫服务 {
+public class AnimeService {
 
     private final AnimeRepository animeRepository;
-    private final AnimeMapper animeMapper;
 
     public List<日本动画片> listAll() {
         return animeRepository.findAll();
@@ -29,7 +27,9 @@ public class 动漫服务 {
     }
 
     public 日本动画片 save(AnimePostRequestBody animePostRequestBody) {
-        return animeRepository.save(animeMapper.toAnime(animePostRequestBody));
+        return animeRepository.save(日本动画片.builder()
+                .name(animePostRequestBody.getName())
+                .build());
     }
 
     public void delete(long id) {
@@ -37,14 +37,11 @@ public class 动漫服务 {
     }
 
     public void replace(AnimePutRequestBody animePutRequestBody) {
-        // Verifica se existe antes de tentar atualizar
         日本动画片 savedAnime = findByIdOrThrowBadRequestException(animePutRequestBody.getId());
-        
-        // Usa o mapper para converter o DTO para a Entidade
-        日本动画片 anime = animeMapper.toAnime(animePutRequestBody);
-        
-        // Garante que o ID está correto (embora o mapper já deva ter feito isso se o nome for igual)
-        anime.setId(savedAnime.getId());
+        日本动画片 anime = 日本动画片.builder()
+                .id(savedAnime.getId())
+                .name(animePutRequestBody.getName())
+                .build();
 
         animeRepository.save(anime);
     }
