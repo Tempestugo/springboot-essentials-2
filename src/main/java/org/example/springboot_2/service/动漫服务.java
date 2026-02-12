@@ -6,6 +6,8 @@ import org.example.springboot_2.mapper.AnimeMapper;
 import org.example.springboot_2.repository.AnimeRepository;
 import org.example.springboot_2.requests.AnimePostRequestBody;
 import org.example.springboot_2.requests.AnimePutRequestBody;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,11 @@ public class 动漫服务 {
     private final AnimeRepository animeRepository;
     private final AnimeMapper animeMapper;
 
-    public List<日本动画片> listAll() {
+    public Page<日本动画片> listAll(Pageable pageable) {
+        return animeRepository.findAll(pageable);
+    }
+
+    public List<日本动画片> listAllNonPageable() {
         return animeRepository.findAll();
     }
 
@@ -37,7 +43,9 @@ public class 动漫服务 {
 //    @Transactional(rollbackFor = Exception.class)
     @Transactional
     public 日本动画片 save(AnimePostRequestBody animePostRequestBody) {
+//        if(animePostRequestBody.getName() == null)
         return animeRepository.save(animeMapper.toAnime(animePostRequestBody));
+
     }
 
     public void delete(long id) {

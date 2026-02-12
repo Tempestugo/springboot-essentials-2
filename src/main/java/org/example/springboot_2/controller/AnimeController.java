@@ -6,10 +6,13 @@ import org.example.springboot_2.domain.日本动画片;
 import org.example.springboot_2.requests.AnimePostRequestBody;
 import org.example.springboot_2.requests.AnimePutRequestBody;
 import org.example.springboot_2.service.动漫服务;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,10 +29,17 @@ public class AnimeController {
         return "pong";
     }
 
+
     @GetMapping
-    public ResponseEntity<List<日本动画片>> list() {
+    public ResponseEntity<Page<日本动画片>> list(Pageable pageable) {
         log.info(dataUtil.formatLocalDateTImeToDatabaseStyle(LocalDateTime.now()));
-        return ResponseEntity.ok(animeService.listAll());
+        return ResponseEntity.ok(animeService.listAll(pageable));
+    }
+
+    @GetMapping(path = "/all")
+    public ResponseEntity<List<日本动画片>> listAll() {
+        log.info(dataUtil.formatLocalDateTImeToDatabaseStyle(LocalDateTime.now()));
+        return ResponseEntity.ok(animeService.listAllNonPageable());
     }
     
     @GetMapping(path = "/{id}")
@@ -45,7 +55,7 @@ public class AnimeController {
     }
 
     @PostMapping
-    public ResponseEntity<日本动画片> save(@RequestBody AnimePostRequestBody animePostRequestBody){
+    public ResponseEntity<日本动画片> save(@RequestBody @Valid AnimePostRequestBody animePostRequestBody){
         return new ResponseEntity<>(animeService.save(animePostRequestBody), HttpStatus.CREATED);
     }
 
