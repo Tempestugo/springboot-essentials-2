@@ -29,7 +29,6 @@ public class AnimeController {
         return "pong";
     }
 
-
     @GetMapping
     public ResponseEntity<Page<日本动画片>> list(Pageable pageable) {
         log.info(dataUtil.formatLocalDateTImeToDatabaseStyle(LocalDateTime.now()));
@@ -48,7 +47,7 @@ public class AnimeController {
         return ResponseEntity.ok(animeService.findByIdOrThrowBadRequestException(id));
     }
 
-    @GetMapping(path = "/find/{name}")
+    @GetMapping(path = "/find")
     public ResponseEntity<List<日本动画片>> findByName(@RequestParam String name) {
         log.info(dataUtil.formatLocalDateTImeToDatabaseStyle(LocalDateTime.now()));
         return ResponseEntity.ok(animeService.findByName(name));
