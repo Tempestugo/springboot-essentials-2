@@ -1,9 +1,14 @@
 package org.example.springboot_2.requests;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-@Builder
+import lombok.NoArgsConstructor;
+
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AnimePutRequestBody {
     private Long id;
     private String name;

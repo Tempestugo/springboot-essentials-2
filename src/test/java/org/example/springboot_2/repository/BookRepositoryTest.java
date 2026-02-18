@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +79,7 @@ class BookRepositoryTest {
     @DisplayName("Save Throws ConstraintViolationException when title is empty")
     void save_ThrowsContraintViolationException(){
         Book book = new Book();
-        Assertions.assertThatThrownBy(() -> this.bookRepository.save(book));
+        Assertions.assertThatThrownBy(() -> this.bookRepository.save(book))
+                .isInstanceOf(ConstraintViolationException.class);
     }
 }
