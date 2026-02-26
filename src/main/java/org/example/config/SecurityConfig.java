@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @Log4j2
 @EnableMethodSecurity
+
 public class SecurityConfig {
 
     @Bean
