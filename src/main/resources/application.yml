@@ -3,21 +3,42 @@ server:
     include-stacktrace: on_param
 
 spring:
+  application:
+    name: Spring Boot Essentials
   datasource:
-    url: jdbc:mysql://localhost:3306/anime?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3307/anime?useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
     username: root
     password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
 
 logging:
   level:
-    arg:
+    org:
       hibernate:
         SQL: DEBUG
         type: trace
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
 
-
+info:
+  app:
+    name: Spring Boot Essentials
+    version: 1.0
+    description: Minha API

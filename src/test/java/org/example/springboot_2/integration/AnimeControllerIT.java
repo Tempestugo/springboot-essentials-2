@@ -1,6 +1,7 @@
 package org.example.springboot_2.integration;
 
 import org.assertj.core.api.Assertions;
+import org.example.springboot_2.domain.DevDojoUser;
 import org.example.springboot_2.domain.日本动画片;
 import org.example.springboot_2.repository.AnimeRepository;
 import org.example.springboot_2.requests.AnimePostRequestBody;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -31,11 +31,11 @@ public class AnimeControllerIT {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    @LocalServerPort
-    private int port;
-
     @Autowired
     private AnimeRepository animeRepository;
+
+    @Autowired
+    private DevDojoUser devDojoUser;
 
     @Test
     @DisplayName("list returns list of anime inside page object when successful")
@@ -43,7 +43,9 @@ public class AnimeControllerIT {
         日本动画片 savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
         String expectedName = savedAnime.getName();
 
-        PageableResponse<日本动画片> animePage = testRestTemplate.exchange("/animes", HttpMethod.GET, null,
+        PageableResponse<日本动画片> animePage = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .exchange("/animes", HttpMethod.GET, null,
                 new ParameterizedTypeReference<PageableResponse<日本动画片>>() {
                 }).getBody();
 
@@ -60,7 +62,9 @@ public class AnimeControllerIT {
         日本动画片 savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
         String expectedName = savedAnime.getName();
 
-        List<日本动画片> animes = testRestTemplate.exchange("/animes/all", HttpMethod.GET, null,
+        List<日本动画片> animes = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .exchange("/animes/all", HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<日本动画片>>() {
                 }).getBody();
 
@@ -77,7 +81,9 @@ public class AnimeControllerIT {
         日本动画片 savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
         Long expectedId = savedAnime.getId();
 
-        日本动画片 anime = testRestTemplate.getForObject("/animes/{id}", 日本动画片.class, expectedId);
+        日本动画片 anime = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .getForObject("/animes/{id}", 日本动画片.class, expectedId);
 
         Assertions.assertThat(anime).isNotNull();
         Assertions.assertThat(anime.getId()).isNotNull().isEqualTo(expectedId);
@@ -90,7 +96,9 @@ public class AnimeControllerIT {
         String expectedName = savedAnime.getName();
         String url = String.format("/animes/find?name=%s", expectedName);
 
-        List<日本动画片> animes = testRestTemplate.exchange(url, HttpMethod.GET, null,
+        List<日本动画片> animes = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<日本动画片>>() {
                 }).getBody();
 
@@ -105,7 +113,9 @@ public class AnimeControllerIT {
     @Test
     @DisplayName("findByName returns an empty list of anime when anime is not found")
     void findByName_ReturnsEmptyListOfAnime_WhenAnimeIsNotFound() {
-        List<日本动画片> animes = testRestTemplate.exchange("/animes/find?name=dbz", HttpMethod.GET, null,
+        List<日本动画片> animes = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .exchange("/animes/find?name=dbz", HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<日本动画片>>() {
                 }).getBody();
 
@@ -118,12 +128,30 @@ public class AnimeControllerIT {
     @DisplayName("save returns anime when successful")
     void save_ReturnsAnime_WhenSuccessful() {
         AnimePostRequestBody animePostRequestBody = AnimePostResquestBodyCreator.createAnimePostRequestBody();
-        ResponseEntity<日本动画片> animeResponseEntity = testRestTemplate.postForEntity("/animes", animePostRequestBody, 日本动画片.class);
+        
+        // Save precisa de ADMIN
+        ResponseEntity<日本动画片> animeResponseEntity = testRestTemplate
+                .withBasicAuth("admin", "balda")
+                .postForEntity("/animes", animePostRequestBody, 日本动画片.class);
 
         Assertions.assertThat(animeResponseEntity).isNotNull();
         Assertions.assertThat(animeResponseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(animeResponseEntity.getBody()).isNotNull();
         Assertions.assertThat(animeResponseEntity.getBody().getId()).isNotNull();
+    }
+    
+    @Test
+    @DisplayName("save returns 403 when user is not admin")
+    void save_Returns403_WhenUserIsNotAdmin() {
+        AnimePostRequestBody animePostRequestBody = AnimePostResquestBodyCreator.createAnimePostRequestBody();
+
+        // Tenta salvar com usuário comum (devdojo)
+        ResponseEntity<日本动画片> animeResponseEntity = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .postForEntity("/animes", animePostRequestBody, 日本动画片.class);
+
+        Assertions.assertThat(animeResponseEntity).isNotNull();
+        Assertions.assertThat(animeResponseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     @Test
@@ -132,7 +160,9 @@ public class AnimeControllerIT {
         日本动画片 savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
         savedAnime.setName("new name");
 
-        ResponseEntity<Void> animeResponseEntity = testRestTemplate.exchange("/animes",
+        ResponseEntity<Void> animeResponseEntity = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .exchange("/animes",
                 HttpMethod.PUT,
                 new HttpEntity<>(savedAnime),
                 Void.class);
@@ -146,7 +176,9 @@ public class AnimeControllerIT {
     void delete_RemovesAnime_WhenSuccessful() {
         日本动画片 savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
 
-        ResponseEntity<Void> animeResponseEntity = testRestTemplate.exchange("/animes/{id}",
+        ResponseEntity<Void> animeResponseEntity = testRestTemplate
+                .withBasicAuth("devdojo", "balda")
+                .exchange("/animes/{id}",
                 HttpMethod.DELETE,
                 null,
                 Void.class,

@@ -12,7 +12,10 @@ import org.mapstruct.factory.Mappers;
 public abstract class AnimeMapper {
     public static final AnimeMapper INSTANCE = Mappers.getMapper(AnimeMapper.class);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "url", ignore = true)
     public abstract 日本动画片 toAnime(AnimePostRequestBody animePostRequestBody);
 
+    @Mapping(target = "url", ignore = true)
     public abstract 日本动画片 toAnime(AnimePutRequestBody animePutRequestBody);
 }

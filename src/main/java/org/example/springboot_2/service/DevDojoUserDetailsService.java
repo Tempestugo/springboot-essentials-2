@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class DevDojoUserDetailsService implements UserDetailsService {
     private final DevDojoUserRepository devDojoUserRepository;
